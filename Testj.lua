@@ -179,7 +179,7 @@ local function CreateTab(parent, tabName, tabPosition, tabSize)
     return tab, tabButton
 end
 
--- Hàm chuyển đổi giữa các tab
+-- Hàm chuyển tab
 local function SwitchTabs(tabContainer, selectedTabName)
     for _, tab in pairs(tabContainer:GetChildren()) do
         if tab:IsA("Frame") then
@@ -188,49 +188,47 @@ local function SwitchTabs(tabContainer, selectedTabName)
     end
 end
 
--- Khởi tạo GUI
-local screenGui = Instance.new("ScreenGui")
-screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-
-local mainFrame = Instance.new("Frame")
-mainFrame.Parent = screenGui
+-- Tìm Main Frame của bạn (thay MainFrame bằng tên Frame chính của bạn)
+local mainFrame = script.Parent:FindFirstChild("MainFrame") or Instance.new("Frame")
+mainFrame.Name = "MainFrame"
+mainFrame.Parent = script.Parent
 mainFrame.Size = UDim2.new(0, 400, 0, 300)
 mainFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
 mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 
--- Tạo container cho các tab
+-- Tạo container để hiển thị tab
 local tabContainer = Instance.new("Frame")
+tabContainer.Name = "TabContainer"
 tabContainer.Parent = mainFrame
 tabContainer.Size = UDim2.new(1, 0, 0.9, 0)
 tabContainer.Position = UDim2.new(0, 0, 0.1, 0)
 tabContainer.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 
--- Tạo các tab
+-- Tạo Tabs
 local tab1, button1 = CreateTab(mainFrame, "Tab1", UDim2.new(0, 0, 0, 0))
 local tab2, button2 = CreateTab(mainFrame, "Tab2", UDim2.new(0, 100, 0, 0))
 
--- Tạo nội dung tab 1
+-- Thêm nội dung vào từng Tab
 local content1 = Instance.new("TextLabel")
 content1.Parent = tabContainer
 content1.Size = UDim2.new(1, 0, 1, 0)
 content1.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-content1.Text = "This is Tab 1"
+content1.Text = "Nội dung Tab 1"
 content1.TextColor3 = Color3.fromRGB(255, 255, 255)
 content1.TextSize = 16
 content1.Name = "Tab1"
 
--- Tạo nội dung tab 2
 local content2 = Instance.new("TextLabel")
 content2.Parent = tabContainer
 content2.Size = UDim2.new(1, 0, 1, 0)
 content2.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-content2.Text = "This is Tab 2"
+content2.Text = "Nội dung Tab 2"
 content2.TextColor3 = Color3.fromRGB(255, 255, 255)
 content2.TextSize = 16
 content2.Visible = false
 content2.Name = "Tab2"
 
--- Thêm logic chuyển tab
+-- Kết nối sự kiện chuyển Tab
 button1.MouseButton1Click:Connect(function()
     SwitchTabs(tabContainer, "Tab1")
 end)
