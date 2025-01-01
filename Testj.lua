@@ -236,3 +236,27 @@ end)
 button2.MouseButton1Click:Connect(function()
     SwitchTabs(tabContainer, "Tab2")
 end)
+
+local screenGui = game.Players.LocalPlayer.PlayerGui:FindFirstChild("MainGui")
+if not screenGui then
+    screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "MainGui"
+    screenGui.Parent = game.Players.LocalPlayer.PlayerGui
+end
+
+local mainFrame = screenGui:FindFirstChild("MainFrame")
+if not mainFrame then
+    mainFrame = Instance.new("Frame")
+    mainFrame.Name = "MainFrame"
+    mainFrame.Parent = screenGui
+    mainFrame.Size = UDim2.new(0, 400, 0, 300)
+    mainFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
+    mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+end
+local function SwitchTabs(tabContainer, selectedTabName)
+    for _, tab in pairs(tabContainer:GetChildren()) do
+        if tab:IsA("TextLabel") or tab:IsA("Frame") then
+            tab.Visible = (tab.Name == selectedTabName)
+        end
+    end
+end
