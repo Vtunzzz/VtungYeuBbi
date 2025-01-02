@@ -1,16 +1,9 @@
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
-local attackRange = 3000
-local weaponName = "Gun" 
+local attackRange = 99999 -- Phạm vi tấn công (đơn vị: studs)
+local shooting = false -- Kiểm tra trạng thái bắn
 
-
-local function isHoldingWeapon()
-    local backpack = player:WaitForChild("Backpack")
-    local characterTool = character:FindFirstChildOfClass("Tool")
-    return (characterTool and characterTool.Name == weaponName) or (backpack:FindFirstChild(weaponName) ~= nil)
-end
-
-
+-- Tìm mục tiêu trong phạm vi
 local function findTarget()
     local closestTarget = nil
     local shortestDistance = attackRange
@@ -30,10 +23,11 @@ local function findTarget()
     return closestTarget
 end
 
-
-local function attackTarget(target)
+-- Gửi sự kiện bắn
+local function shootAtTarget(target)
     if not target or not target:FindFirstChild("HumanoidRootPart") then return end
 
+    local targetPosition = target:FindFirstChild("HumanoidRootPart").Position
     local args = {
         [1] = character:WaitForChild("HumanoidRootPart").Position, -- Vị trí người chơi
         [2] = {
@@ -44,28 +38,21 @@ local function attackTarget(target)
     game:GetService("ReplicatedStorage"):WaitForChild("Modules"):WaitForChild("Net"):WaitForChild("RE/ShootGunEvent"):FireServer(unpack(args))
 end
 
-
-local function autoAttack()
+-- Tự động bắn khi có mục tiêu
+local function autoShoot()
     while true do
-        task.wait(0.01) 
-        if isHoldingWeapon() then
+        task.wait(0.01) -- Điều chỉnh tốc độ bắn (0.1 giây/lần)
+        
+        if not shooting then
             local target = findTarget()
             if target then
-                attackTarget(target)
+                shooting = true
+                shootAtTarget(target)
+                shooting = false
             end
         end
     end
 end
 
-task.spawn(autoAttack)
-
-local shootGunEvent = game:GetService("ReplicatedStorage"):WaitForChild("Modules"):WaitForChild("Net"):WaitForChild("RE/ShootGunEvent")
-
-shootGunEvent.OnServerEvent:Connect(function(player, origin, targets)
-    if typeof(origin) == "Vector3" and typeof(targets) == "table" then
-        local character = player.Character
-        local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
-        if not humanoidRootPart then return end
-
-        for _, target in ipairs(targets) do
-            local distance =
+-- Bắt đầu auto click
+task.spawn(autoShoot)
